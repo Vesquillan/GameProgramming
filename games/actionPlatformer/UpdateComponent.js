@@ -3,9 +3,11 @@ class UpdateComponent extends Component {
     yVelocity = 0
 
     start(){
+        this.timeSinceLastAttack = 0
         //this.gameObject.transform.position = new Vector2(50,50)
     }
     update() {
+        this.timeSinceLastAttack += 1
         //Check to see if the right arrow key is down.
         //If it is, move our character right
         if (Input.keysDown.includes("ArrowRight") || Input.keysDown.includes("KeyD"))
@@ -25,5 +27,10 @@ class UpdateComponent extends Component {
             this.yVelocity -= 15
 
         this.transform.position.y += this.yVelocity
+
+        if(Input.keysDown.includes("KeyE") && this.timeSinceLastAttack > 60){
+            this.timeSinceLastAttack = 0
+            instantiate(new AttackGameObject(), new Vector2(this.transform.position.clone().x + 60, this.transform.position.clone().y))
+        }
     }
 }

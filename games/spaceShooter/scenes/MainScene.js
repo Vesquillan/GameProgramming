@@ -1,0 +1,7 @@
+class MainScene extends Scene{
+    constructor(){
+        super()
+        this.instantiate(new MainGameObject(), new Vector2(50, 300))
+        this.instantiate(new EnemyGameObject(), new Vector2(25, 150), Math.PI)
+    }
+}

@@ -1,9 +1,10 @@
 class Scene{
     gameObjects = []
 
-    instantiate(gameObject, position = new Vector2(0,0)){
+    instantiate(gameObject, position = new Vector2(0,0), rotation = 0){
         this.gameObjects.push(gameObject)
         gameObject.transform.position = position
+        gameObject.transform.rotation = rotation
     }
 
     start(){
@@ -15,6 +16,14 @@ class Scene{
         for(const gameObject of this.gameObjects){
             gameObject.update()
         }
+
+        let temp = []
+        for(const gameObject of this.gameObjects){
+            if(!gameObject.markForDestroy){
+                temp.push(gameObject)
+            }
+        }
+        this.gameObjects = temp
     }
     draw(ctx){
         for(const gameObject of this.gameObjects){
@@ -23,6 +32,7 @@ class Scene{
     }
 }
 
-function instantiate(gameObject, position = new Vector2(0,0)){
-    Engine.currentScene.instantiate(gameObject, position)
+function instantiate(gameObject, position = new Vector2(0,0), rotation = 0){
+    Engine.currentScene.instantiate(gameObject, position, rotation)
+    return gameObject
 }

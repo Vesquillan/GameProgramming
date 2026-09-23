@@ -4,7 +4,7 @@ class LaserController extends Component{
         this.speed = 180
         this.transform.position.y -= Time.deltaTime * this.speed
 
-        if(this.transform.position.y < 1000){
+        if(this.transform.position.y < -1000){
             this.gameObject.destroy()
         }
         
@@ -15,7 +15,8 @@ class LaserController extends Component{
             let distance = myPosition.minus(enemyPosition).magnitude
             if(distance < 20){
                 this.gameObject.destroy()
-                enemyGameObject.destroy()
+                let healthComponent = enemyGameObject.getComponent(Health)
+                healthComponent.health --
             }
         }
     }

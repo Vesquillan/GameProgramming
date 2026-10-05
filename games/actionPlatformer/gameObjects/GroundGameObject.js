@@ -1,6 +1,9 @@
 class GroundGameObject extends GameObject{
     constructor(){
-        super("Ground")
-        this.addComponent(new Polygon(), {fillStyle:"green", points:Assets.square})
+        super("Ground", ["Ground"])
+        if(Math.random() > .5)
+            this.addComponent(new Polygon(), {fillStyle:"grey", points:Assets.square})
+        else
+            this.addComponent(new Polygon(), {fillStyle:"turquoise", points:Assets.square})
     }
 }

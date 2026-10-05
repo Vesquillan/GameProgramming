@@ -1,10 +1,17 @@
 class Scene{
     gameObjects = []
 
+    constructor(){
+        let cameraGameObject = new GameObject("MainCamera", ["MainCamera"])
+        cameraGameObject.addComponent(new Camera())
+        this.instantiate(cameraGameObject)
+    }
+
     instantiate(gameObject, position = new Vector2(0,0), rotation = 0){
         this.gameObjects.push(gameObject)
         gameObject.transform.position = position
         gameObject.transform.rotation = rotation
+        return gameObject
     }
 
     start(){
@@ -26,13 +33,28 @@ class Scene{
         this.gameObjects = temp
     }
     draw(ctx){
-        for(const gameObject of this.gameObjects){
+        ctx.fillStyle = Camera.main.backgroundColor
+        ctx.fillRect(0, 0, Engine.canvas.width, Engine.canvas.height)
+
+        ctx.save()
+
+        ctx.translate(Engine.canvas.width/2, Engine.canvas.height/2)
+        ctx.translate(-Camera.main.transform.position.x, -Camera.main.transform.position.y)
+
+        for(const layer of Engine.layers.filter(l => l != "UI")){
+            for(const gameObject of this.gameObjects.filter(go=>go.layer == layer)){
+                gameObject.draw(ctx)
+            }
+        }
+
+        ctx.restore()
+
+        for(const gameObject of this.gameObjects.filter(go=>go.layer == "UI")){
             gameObject.draw(ctx)
         }
     }
 }
 
 function instantiate(gameObject, position = new Vector2(0,0), rotation = 0){
-    Engine.currentScene.instantiate(gameObject, position, rotation)
-    return gameObject
+    return SceneManager.currentScene.instantiate(gameObject, position, rotation)
 }

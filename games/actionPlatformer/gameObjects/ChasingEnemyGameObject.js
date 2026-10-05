@@ -1,7 +1,7 @@
-class EnemyGameObject extends GameObject{
+class ChasingEnemyGameObject extends GameObject{
     constructor(){
         super("Enemy", ["Enemy"])
-        this.addComponent(new EnemyController())
+        this.addComponent(new ChasingEnemyController())
         this.addComponent(new Polygon(), {fillStyle:"darkgrey", points:Assets.triangle})
     }
 }

@@ -3,14 +3,18 @@ class GameObject{
     markForDestroy = false
 
     name
+    tags = []
+    layer = "default"
 
     get transform(){
         return this.components[0];
     }
 
-    constructor(name){
+    constructor(name, tags = [], layer = 'default'){
         this.addComponent(new Transform())
         this.name = name
+        this.tags = tags
+        this.layer = layer
     }
 
     addComponent(component, parameters){
@@ -19,9 +23,16 @@ class GameObject{
         component.gameObject = this
     }
 
-    start(){
+    broadcastMessage(message, args = []){
         for(const component of this.components){
+            component[message]?.(...args)
+        }
+    }
+
+    start(){
+        for(const component of this.components.filter(c=>!c.didStart)){
             component.start?.()
+            component.didStart = true
         }
     }
     update(){
@@ -44,15 +55,13 @@ class GameObject{
     }
 
     static find(name){
-        return Engine.currentScene.gameObjects.find(go=>go.name == name)
+        return SceneManager.currentScene.gameObjects.find(go=>go.name == name)
     }
-    static findAll(name){
-        let tempList = []
-        for(let i = 0; i < Engine.currentScene.gameObjects.length; i++){
-            if(Engine.currentScene.gameObjects[i].name == name){
-                tempList.push(Engine.currentScene.gameObjects[i])
-            }
-        }
-        return tempList
+    static findGameObjectsWithTag(tag){
+        return SceneManager.currentScene.gameObjects.filter(go=>go.tags.includes(tag))
+    }
+
+    static findGameObjectsByType(type){
+        return SceneManager.currentScene.gameObjects.filter(go => go.components.find(c=>c instanceof type))
     }
 }

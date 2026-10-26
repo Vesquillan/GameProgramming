@@ -13,13 +13,14 @@ class UpdateComponent extends Component {
         this.dashes = 1
         this.maxDashes = 1
         this.speed = 350
+        this.jumpPrepped = false
         //this.gameObject.transform.position = new Vector2(50,50)
     }
     update() {
         this.enemies = GameObject.findGameObjectsWithTag("Enemy")
         if(this.enemies.length > 0){
             for(const enemy of this.enemies){
-                if((enemy.transform.position.minus(this.transform.position).magnitude < 70) && !this.attacking && !this.dashing){
+                if((enemy.transform.position.minus(this.transform.position).magnitude < 70) && !this.attacking && !this.dashing && enemy.getComponent(EnemyController).dangerous){
                     this.die()
                 }
             }
@@ -51,7 +52,10 @@ class UpdateComponent extends Component {
         else{
             if(Math.abs(this.xVelocity) < this.drag){
                 this.xVelocity = 0
-                this.dashing = false
+                if(this.dashing){
+                    this.dashing = false
+                    this.yVelocity = 0
+                }
             }
             else{
                 if(this.xVelocity > 0){
@@ -63,13 +67,13 @@ class UpdateComponent extends Component {
             }
         }
 
-        if(Input.keysDown.includes("ShiftLeft") && !this.dashing && this.dashes > 0){
-            this.dash(1425, "black")
+        if(Input.keysDownThisFrame.includes("ShiftLeft") && !this.dashing && this.dashes > 0){
+            this.dash(1425, "black", new Vector2(this.facing, 0))
         }
 
         if(!this.dashing){
             if(this.dashes > 0){
-                this.gameObject.getComponent(Polygon).fillStyle = "green"
+                this.gameObject.getComponent(Polygon).fillStyle = "rgb(0, 75, 0)"
                 this.speed = 350
             }
             else{
@@ -85,30 +89,47 @@ class UpdateComponent extends Component {
         }
         else{
             this.transform.position.y = this.isGrounded().transform.position.y - 79
-            this.yVelocity = 0
-            this.dashes = this.maxDashes
+            if(!this.dashing){
+                this.yVelocity = 0
+                this.dashes = this.maxDashes
+            }
         }
 
-        if(Input.keysDown.includes("Space") && this.isGrounded() && !this.dashing){
-            this.yVelocity -= 700
+        if(Input.keysDownThisFrame.includes("Space")){
+            this.jumpPrepped = true
+        }
+
+        if(this.jumpPrepped && !this.dashing){
+            if(this.isGrounded()){
+                this.yVelocity -= 700
+            }
+            this.jumpPrepped = false
         }
 
         this.transform.position.y += Time.deltaTime * this.yVelocity
         this.transform.position.x += Time.deltaTime * this.xVelocity
 
-        if(Input.keysDown.includes("KeyE") && this.timeSinceLastAttack > 30 && !this.attacking){
-            this.dash(1250, "blue")
+        if(Input.mouseButtonsDownThisFrame.includes(0) && this.timeSinceLastAttack > 30 && !this.attacking){
+            this.dash(1250, "blue", this.worldMousePos().minus(this.transform.position))
             this.attack = instantiate(new AttackGameObject(), new Vector2(10000, 10000), (Math.PI/2))
             this.attacking = true
-            this.attack.transform.scale = new Vector2(this.attack.transform.scale.x * this.facing, this.attack.transform.scale.y * this.facing)
+            //this.attack.transform.scale = new Vector2(this.attack.transform.scale.x * this.facing, this.attack.transform.scale.y * this.facing)
             this.attackTimer = 0
         }
         if(this.attacking){
-            this.attack.transform.position.x = this.transform.position.x + (70 * this.facing)
+            this.attack.transform.position.x = this.transform.position.x
             this.attack.transform.position.y = this.transform.position.y
+            let mouse = this.worldMousePos().minus(this.transform.position)
+            if(mouse.x > 0){
+                this.attack.transform.rotation = Math.atan(mouse.y / mouse.x) + Math.PI/2
+            }
+            else{
+                this.attack.transform.rotation = Math.atan(mouse.y / mouse.x) + (3 * Math.PI/2)
+            }
             this.attackTimer += 1
         }
         if(this.attackTimer > 20){
+            this.attack.transform.rotation = 0
             this.attacking = false
             this.attackTimer = 0
             this.timeSinceLastAttack = 0
@@ -130,13 +151,52 @@ class UpdateComponent extends Component {
         this.transform.position.y = 550
         this.yVelocity = 0
     }
-    dash(strength, color){
+    dash(strength, color, target){
+        console.log(target)
+        let angle = Math.atan(target.y / target.x)
+        if(target.x == 0){
+            angle = 0
+        }
+        if(target.y == 0){
+            angle = 0
+        }
+        let direction = new Vector2(Math.cos(angle), Math.sin(angle))
+        if(target.x == 0){
+            direction.x = 0
+        }
+        if(target.y == 0){
+            direction.y = 0
+        }
         if(this.dashes > 0){
-            this.xVelocity = strength * this.facing
+            if(target.x < 0){
+                this.yVelocity = strength * direction.y * -1
+                this.xVelocity = strength * direction.x * -1
+                this.facing = -1
+            }
+            else{
+                this.yVelocity = strength * direction.y
+                this.xVelocity = strength * direction.x
+                this.facing = 1
+            }
+            
             this.dashing = true
             this.dashes -= 1
-            this.yVelocity = 0
         }
         this.gameObject.getComponent(Polygon).fillStyle = color
+    }
+    worldMousePos(){
+        console.log()
+        if(Input.mousePosition){
+            let matrix = new DOMMatrix()
+            matrix.translateSelf(Engine.canvas.width/2, Engine.canvas.height/2)
+            matrix.multiplySelf(Camera.main.transform.getWorldMatrix().inverse())
+
+            let worldPositionDOMPoint = matrix.inverse().transformPoint(Input.mousePosition)
+            let worldPosition = new Vector2(worldPositionDOMPoint.x, worldPositionDOMPoint.y)
+            return worldPosition
+        }
+        else{
+            return new Vector2(0, 0)
+        }
     }
 }

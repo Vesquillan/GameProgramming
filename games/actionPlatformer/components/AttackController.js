@@ -13,10 +13,7 @@ class AttackController extends Component{
             let enemyPosition = enemyGameObject.transform.position
             let distance = myPosition.minus(enemyPosition).magnitude
             if(distance < 50){
-                if(enemyGameObject.tags.includes("Boss") && enemyGameObject.getComponent(BossEnemyController)){
-                    SceneManager.loadScene(Win)
-                }
-                enemyGameObject.destroy()
+                enemyGameObject.getComponent(EnemyController).hit()
             }
         }
     }

@@ -14,9 +14,9 @@ class TextLabel extends Component{
         ctx.save()
 
         //Set center of our object
-        ctx.translate(position.x, position.y)
-        ctx.scale(this.transform.scale.x, this.transform.scale.y)
-        ctx.rotate(this.transform.rotation)
+        // ctx.translate(position.x, position.y)
+        // ctx.scale(this.transform.scale.x, this.transform.scale.y)
+        // ctx.rotate(this.transform.rotation)
 
         //Set the color of the fill
         ctx.fillStyle = this.fillStyle

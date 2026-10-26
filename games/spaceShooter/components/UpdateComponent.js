@@ -27,11 +27,14 @@ class UpdateComponent extends Component {
         if (Input.keysDown.includes("ArrowDown")  || Input.keysDown.includes("KeyS"))
             this.transform.position.y = this.transform.position.y + Time.deltaTime * this.speed
 
-        if(this.timeSinceLastLaser > 20){
+        if(this.timeSinceLastLaser > 20 && Input.keysDown.includes("Space")){
             this.timeSinceLastLaser = 0
             instantiate(new LaserGameObject(), this.transform.position.clone())
         }
 
         Camera.main.transform.position = this.transform.position.clone()
+    }
+    onCollisionStay(other){
+        console.log(other)
     }
 }

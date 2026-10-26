@@ -1,4 +1,4 @@
-class ChasingEnemyController extends Component{
+class ChasingEnemyController extends EnemyController{
     direction = 1
     yVelocity = 0
     xVelocity = 0

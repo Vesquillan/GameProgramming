@@ -11,6 +11,9 @@ class BossEnemyController extends EnemyController{
     hitStunTracker = 1
     startDelay = 0
     active = false
+    start(){
+        this.health = 3
+    }
     update(){
         if(!GameObject.find("BossHand") && this.startDelay <= 5){
             this.startDelay += Time.deltaTime
@@ -47,7 +50,7 @@ class BossEnemyController extends EnemyController{
                 this.vulnerable = false
                 this.transform.position.y = -200
             }
-            if(Math.abs(this.transform.position.x - GameObject.find("Player").transform.position.x) < 10 && !this.slamming){
+            if(Math.abs(this.transform.position.x - GameObject.find("Player").transform.position.x) < 20 && !this.slamming){
                 this.slamming = true
                 this.yVelocity = 2500
             }
@@ -78,18 +81,7 @@ class BossEnemyController extends EnemyController{
             this.transform.position.x += this.xVelocity * Time.deltaTime
         }
     }
-    hit(){
-        if(this.vulnerable){
-            this.hitStun = true
-            this.gameObject.getComponent(Polygon).fillStyle = "rgba(255, 255, 255, 1)"
-            super.dangerous = false
-            this.vulnerable = false
-            this.health -= 1
-            if(this.health <= 0){
-                this.die()
-            }
-        }
-    }
+    
     die(){
         this.gameObject.destroy()
         SceneManager.loadScene(Win)

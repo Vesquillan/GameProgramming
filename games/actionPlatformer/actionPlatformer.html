@@ -12,6 +12,7 @@
         <canvas id="canv">
 
         </canvas>
+        <script src="../../engine/Collisions.js"></script>
         <script src="../../engine/Vector2.js"></script>
         <script src="../../engine/Input.js"></script>
         <script src="../../engine/Engine.js"></script>
@@ -26,6 +27,7 @@
         <script src="../../engine/components/MultiLineTextLabel.js"></script>
         <script src="../../engine/components/Camera.js"></script>
         <script src="../../engine/components/Collider.js"></script>
+        <script src="../../engine/components/RigidBody.js"></script>
 
         <script src="./scenes/Level01.js"></script>
         <script src="./scenes/Level02.js"></script>
@@ -45,6 +47,7 @@
         <script src="./gameObjects/AttackGameObject.js"></script>
         <script src="./gameObjects/GroundGameObject.js"></script>
         <script src="./gameObjects/EnemyGameObject.js"></script>
+        <script src="./gameObjects/HeavyEnemyGameObject.js"></script>
         <script src="./gameObjects/BossGameObject.js"></script>
         <script src="./gameObjects/BossHandGameObject.js"></script>
         <script src="./gameObjects/MainMenuControllerGameObject.js"></script>
@@ -52,6 +55,7 @@
         <script src="./gameObjects/WinControllerGameObject.js"></script>
         <script src="./gameObjects/ChasingEnemyGameObject.js"></script>
         <script src="./components/EnemyController.js"></script>
+        <script src="./components/HeavyEnemyController.js"></script>
         <script src="./components/ChasingEnemyController.js"></script>
         <script src="./components/BossEnemyController.js"></script>
         <script src="./components/BossHandEnemyController.js"></script>
@@ -59,6 +63,38 @@
         <script src="Globals.js"></script>
         <script>
             Engine.start(MainMenu)
+            //Tests
+        let gameObject = new GameObject()
+        gameObject.addComponent(new Polygon(), {points: [
+            new Vector2(0, -1),
+            new Vector2(-1, 1),
+            new Vector2(1, 1)
+        ]})
+        gameObject.addComponent(new Collider())
+
+        let two = new GameObject()
+        two.addComponent(new Polygon(), {points: [
+            new Vector2(0, -1),
+            new Vector2(-1, 1),
+            new Vector2(1, 1)
+        ]})
+        two.addComponent(new Collider())
+
+        console.assert(Collisions.isCollisionPointPolygon(new Vector2(0,0), gameObject))
+        console.assert(Collisions.isCollisionPointPolygon(new Vector2(0,0.99999), gameObject))
+
+
+        console.assert(!Collisions.isCollisionPointPolygon(new Vector2(10000,10000), gameObject))
+        console.assert(!Collisions.isCollisionPointPolygon(new Vector2(0,1.1), gameObject))
+        console.assert(!Collisions.isCollisionPointPolygon(new Vector2(0,-1.1), gameObject))
+        console.assert(!Collisions.isCollisionPointPolygon(new Vector2(0,-1.00001), gameObject))
+
+        console.assert(Collisions.isCollisionPolygonPolygon(gameObject, two))
+        two.transform.position = new Vector2(1000, 1000)
+        console.assert(!Collisions.isCollisionPolygonPolygon(gameObject, two))
         </script>
+    <script src="scenes/Level00.js"></script>
+    <script src="gameObjects/ElevatorGameObject.js"></script>
+    <script src="components/ElevatorGameObjectController.js"></script>
     </body>
 </html>

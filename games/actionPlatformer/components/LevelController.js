@@ -8,6 +8,10 @@ class LevelController extends Component{
         if(playerGameObject.transform.position.y <= -500){
             console.log(Globals.currentLevel)
             switch(Globals.currentLevel){
+                case "0":
+                    Globals.currentLevel = "1"
+                    SceneManager.loadScene(Level01)
+                    break
                 case "1":
                     Globals.currentLevel = "2"
                     SceneManager.loadScene(Level02)

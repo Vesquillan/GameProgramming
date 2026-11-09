@@ -1,3 +1,3 @@
 class Globals{
-    static currentLevel = "1"
+    static currentLevel = "0"
 }

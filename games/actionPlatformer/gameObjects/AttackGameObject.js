@@ -2,6 +2,7 @@ class AttackGameObject extends GameObject{
     constructor(){
         super("Attack")
         this.addComponent(new AttackController())
+        this.addComponent(new Collider(), {isTrigger: true})
         this.addComponent(new Polygon(), {fillStyle:"blue", points:Assets.triangle})
         this.transform.scale = new Vector2(0.25, 1.75)
         this.transform.rotation = Math.PI/2

@@ -3,5 +3,6 @@ class EnemyGameObject extends GameObject{
         super("Enemy", ["Enemy"])
         this.addComponent(new EnemyController())
         this.addComponent(new Polygon(), {fillStyle:"darkgrey", points:Assets.triangle})
+        this.addComponent(new Collider(), {isTrigger : true})
     }
 }

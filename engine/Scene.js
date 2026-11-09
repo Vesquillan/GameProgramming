@@ -23,10 +23,16 @@ class Scene{
         }
     }
     update(){
+
+        for(const gameObject of this.gameObjects){
+            gameObject.broadcastMessage("fixedUpdate")
+        }
+
         //Collision
         const collidable = GameObject.findGameObjectsByType(Collider)
 
-        if(InputDeviceInfo.mousePosition){
+        //mouse collisions baybee
+        if(Input.mousePosition){
             let matrix = new DOMMatrix()
             matrix.translateSelf(Engine.canvas.width/2, Engine.canvas.height/2)
             matrix.multiplySelf(Camera.main.transform.getWorldMatrix().inverse())
@@ -40,14 +46,40 @@ class Scene{
             }
         }
 
+        //collisiony things
+        const physicalCollisions = []
         for(let i = 0; i < collidable.length; i++){
-            for(let j = i+1; i < collidable.length; j++){
-                if(Collisions.isCollisionPolygonPolygon(collidable[i], collidable[j])){
-                    collidable[i].broadcastMessage("onCollisionStay", [collidable[j]])
-                    collidable[j].broadcastMessage("onCollisionStay", [collidable[i]])
+            for(let j = i+1; j < collidable.length; j++){
+                const one = collidable[i]
+                const two = collidable[j]
+                if(!one.getComponent(RigidBody) && !two.getComponent(RigidBody)){
+                    continue
+                }
+                const minimumTransformVector = Collisions.isCollisionPolygonPolygon(one, two)
+                if(minimumTransformVector){
+                    if(!one.getComponent(Collider).isTrigger && !two.getComponent(Collider).isTrigger){
+                        collidable[i].broadcastMessage("onCollisionStay", [collidable[j], minimumTransformVector])
+                        collidable[j].broadcastMessage("onCollisionStay", [collidable[i], minimumTransformVector.scaled(-1)])
+                        physicalCollisions.push({one: collidable[i], two: collidable[j], minimumTransformVector: minimumTransformVector})
+                    }
+                    else{
+                        collidable[i].broadcastMessage("onTriggerStay", [collidable[j], minimumTransformVector])
+                        collidable[j].broadcastMessage("onTriggerStay", [collidable[i], minimumTransformVector.scaled(-1)])
+                    }
                 }
             }
         }
+
+        //physicsy things
+        for(const physicalCollision of physicalCollisions){
+            if(physicalCollision.one.getComponent(RigidBody)){
+                physicalCollision.one.transform.position.plusEquals(physicalCollision.minimumTransformVector)
+            }
+            if(physicalCollision.two.getComponent(RigidBody)){
+                physicalCollision.two.transform.position.plusEquals(physicalCollision.minimumTransformVector.scaled(-1))
+            }
+        }
+
 
         for(const gameObject of this.gameObjects){
             gameObject.update()

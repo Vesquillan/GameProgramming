@@ -4,13 +4,10 @@ class BossHandEnemyController extends EnemyController{
     xVelocity = 0
     maxVelocity = 200
     slamming = false
-    vulnerable = false
-    health = 3
-    hitStun = false
-    hitStunTimer = 0
-    hitStunTracker = 1
+    
     enraged = 1
     start(){
+        this.health = 3
         if(this.transform.position.x < 0){
             this.hand = -1
         }
@@ -36,7 +33,7 @@ class BossHandEnemyController extends EnemyController{
             this.vulnerable = false
             this.transform.position.y = -200
         }
-        if(Math.abs(this.transform.position.x - GameObject.find("Player").transform.position.x) < 10 && !this.slamming){
+        if(Math.abs(this.transform.position.x - GameObject.find("Player").transform.position.x) < 20 && !this.slamming){
             this.slamming = true
             this.yVelocity = 1000 * this.enraged
         }

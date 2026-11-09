@@ -2,6 +2,8 @@ class TextLabel extends Component{
     fillStyle = "black"
     text = "[BLANK]"
     font = "10px Arial"
+    textAlign = "left"
+    textBaseline = "alphabetic"
 
     draw(ctx) {
         let position = this.transform.position
@@ -21,6 +23,8 @@ class TextLabel extends Component{
         //Set the color of the fill
         ctx.fillStyle = this.fillStyle
         ctx.font = this.font
+        ctx.textAlign = this.textAlign
+        ctx.textBaseline = this.textBaseline
         //Tell the canvas to draw the object
         ctx.fillText(this.text, 0, 0)
 

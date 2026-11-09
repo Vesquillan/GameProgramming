@@ -7,7 +7,7 @@ class AttackController extends Component{
         else{
             this.timer += 1
         }
-        let myPosition = this.transform.position
+        /*let myPosition = this.transform.position
         let enemyGameObjects = GameObject.findGameObjectsWithTag("Enemy")
         for(const enemyGameObject of enemyGameObjects){
             let enemyPosition = enemyGameObject.transform.position
@@ -15,6 +15,12 @@ class AttackController extends Component{
             if(distance < 50){
                 enemyGameObject.getComponent(EnemyController).hit()
             }
+        }*/
+    }
+
+    onTriggerStay(other){
+        if(other.tags.includes("Enemy")){
+            other.getComponent(EnemyController).hit()
         }
     }
 }

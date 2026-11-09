@@ -5,5 +5,6 @@ class GroundGameObject extends GameObject{
             this.addComponent(new Polygon(), {fillStyle:"grey", points:Assets.square})
         else
             this.addComponent(new Polygon(), {fillStyle:"turquoise", points:Assets.square})
+        this.addComponent(new Collider())
     }
 }
